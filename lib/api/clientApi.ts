@@ -13,6 +13,8 @@ interface CreateNoteData {
   tag: NoteTag;
 }
 
+type SortBy = "title" | "createdAt" | "updatedAt";
+
 interface FetchNotesParams {
   search?: string;
   tag?: NoteTag;
@@ -20,8 +22,6 @@ interface FetchNotesParams {
   perPage?: number;
   sortBy?: SortBy;
 }
-
-type SortBy = "title" | "createdAt" | "updatedAt";
 
 interface UserData {
   email: string;
@@ -41,7 +41,7 @@ export async function fetchNotes(
   params?: FetchNotesParams
 ): Promise<FetchNotesResponse> {
   const response = await nextServer.get<FetchNotesResponse>("/notes", {
-    params: params,
+    params,
   });
   return response.data;
 }
@@ -49,12 +49,13 @@ export async function fetchNotes(
 export async function createNote(
   createNoteData: CreateNoteData
 ): Promise<Note> {
-  const res = await nextServer.post<Note>("/notes", createNoteData, {});
+  const res = await nextServer.post<Note>("/notes", createNoteData);
   return res.data;
 }
 
-export async function deleteNote(id: string): Promise<void> {
-  await nextServer.delete<Note>(`/notes/${id}`);
+export async function deleteNote(id: string): Promise<Note> {
+  const res = await nextServer.delete<Note>(`/notes/${id}`);
+  return res.data;
 }
 
 export async function getNoteById(id: string): Promise<Note> {
@@ -78,18 +79,17 @@ export async function logoutUser(): Promise<void> {
 
 export async function checkSession(): Promise<SessionResponse> {
   const res = await nextServer.get("/auth/session");
-  if (res.status === 200) {
-    return { success: true };
-  }
-  return { success: false };
+  return { success: res.status === 200 };
 }
 
 export async function getUser(): Promise<User> {
-  const res = await nextServer.get("/users/me");
+  const res = await nextServer.get<User>("/users/me");
   return res.data;
 }
 
-export async function updateUser(userData: UpdateUserData): Promise<User> {
+export async function updateUser(
+  userData: UpdateUserData
+): Promise<User> {
   const res = await nextServer.patch<User>("/users/me", userData);
   return res.data;
 }
