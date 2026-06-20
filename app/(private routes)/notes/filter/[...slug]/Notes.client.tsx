@@ -2,18 +2,18 @@
 
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import css from './NotesPage.module.css';
-import Pagination from '../../../../components/Pagination/Pagination';
-import SearchBox from '../../../../components/SearchBox/SearchBox';
+import Pagination from '../../../../../components/Pagination/Pagination';
+import SearchBox from '../../../../../components/SearchBox/SearchBox';
 import { useState } from 'react';
-import { fetchNotes } from '../../../../lib/api';
-import NoteList from '../../../../components/NoteList/NoteList';
+import { fetchNotes } from "@/lib/api/clientApi";
+import NoteList from '../../../../../components/NoteList/NoteList';
 import { useDebouncedCallback } from 'use-debounce';
 import { Toaster } from 'react-hot-toast';
 import { NoteTag } from '@/types/note';
 import Link from 'next/link';
 
 type Props = {
-  tag?: NoteTag;
+  tag: NoteTag | "all";
 };
 function Notes({ tag }: Props) {
   const [input, setInput] = useState('');
@@ -27,7 +27,7 @@ function Notes({ tag }: Props) {
         page,
         search: querySe || undefined,
         perPage: 12,
-        tag: tag,
+         ...(tag !== "all" ? { tag } : {}),
       }),
     placeholderData: keepPreviousData,
   });

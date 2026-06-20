@@ -4,6 +4,8 @@ import { Roboto } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
+import { Toaster } from "react-hot-toast";
+import AuthProvider from "@/components/AuthProvider/AuthProvider";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -18,7 +20,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "NoteHub",
     description: "Application for creating and managing notes",
-    url: "https://08-zustand-one-liard.vercel.app/",
+    url: "https://09-auth-theta-two.vercel.app/",
     images: [
       {
         url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
@@ -32,16 +34,22 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  modal,
 }: {
   children: React.ReactNode;
+  modal: React.ReactNode;
 }) {
   return (
     <html lang="en">
       <body className={`${roboto.className} ${roboto.variable}`}>
         <TanStackProvider>
+          <AuthProvider>
           <Header />
-          <main>{children}</main>
+          <main>{children} {modal}
+              <Toaster position="top-right" />
+            </main>
           <Footer />
+          </AuthProvider>
         </TanStackProvider>
       </body>
     </html>
